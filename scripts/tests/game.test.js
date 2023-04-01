@@ -1,10 +1,5 @@
-// const { beforeAll } = require("@jest/globals");
-// const { default: test } = require("node:test");
-// const { describe } = require("yargs");
 
-
-const { expect } = require("@jest/globals");
-const { game } = require("../game");
+const { game, newGame, showScore } = require("../game");    //every time you add a new function, you need to export it from .js to .test.js
 
 // beforeAll() to load HTML file into the DOM
 beforeAll(() => {
@@ -31,5 +26,26 @@ describe("game object contains correct keys", () => {
     test("choices contain correct ids", () => {
         expect(game.choices).toEqual(["button1", "button2", "button3", "button4"]);
     });
+});
 
-})
+describe("newGame works correctly", () => {
+    beforeAll(() => {
+        game.score = 42;
+        game.playerMoves = ["button1", "button2"];
+        game.currentGame = ["button1", "button2"];
+        document.getElementById("score").innerText = "42";
+        newGame();
+    });
+    test("should set game score to zero", () => {
+        expect(game.score).toEqual(0);
+    });
+    test("should clear the computer sequence array", () => {
+        expect(game.currentGame).toBe[0];
+    });
+    test("should clear the player moves array", () => {
+        expect(game.playerMoves).toBe[0];
+    });
+    test("should display 0 for the element with the id of score", () => {
+        expect(document.getElementById("score").innerText).toEqual(0);
+    });
+});
