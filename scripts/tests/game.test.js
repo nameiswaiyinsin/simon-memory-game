@@ -1,6 +1,10 @@
 
 const { getSystemErrorName } = require("util");
-const { game, newGame, showScore, addTurn, lightsOn, showTurns } = require("../game");    //every time you add a new function, you need to export it from .js to .test.js
+const { game, newGame, showScore, addTurn, lightsOn, showTurns, playerTurn } = require("../game");    //every time you add a new function, you need to export it from .js to .test.js
+
+
+jest.spyOn(window, "alert").mockImplementation(() => { });
+
 
 // beforeAll() to load HTML file into the DOM
 beforeAll(() => {
@@ -85,5 +89,15 @@ describe("game play works correctly", () => {
         game.turnNumber = 42;
         showTurns();
         expect(game.turnNumber).toBe(0);
+    });
+    test("should increment the score if the turn is correct", () => {
+        game.playerMoves.push(game.currentGame[0]);
+        playerTurn();
+        expect(game.score).toBe(1);
+    });
+    test("should call an aler if the move is wrong", () => {
+        game.playerMoves.push("wrong");
+        playerTurn();
+        expect(window.alert).toBeCalledWith("Wrong move!");
     });
 });
