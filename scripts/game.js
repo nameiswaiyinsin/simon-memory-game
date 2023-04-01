@@ -3,6 +3,8 @@ let game = {
     currentGame: [],
     playerMoves: [],
     turnNumber: 0,
+    lastButton: "",
+    turnInProgress: false,
     choices: ["button1", "button2", "button3", "button4"],
 }
 
@@ -13,10 +15,13 @@ function newGame() {
     for (let circle of document.getElementsByClassName("circle")) {
         if (circle.getAttribute("data-listener") !== "true") {
             circle.addEventListener("click", (e) => {
-                let move = e.target.getAttribute("id");
-                lightsOn(move);
-                game.playerMoves.push(move);
-                playerTurn();
+                if (game.currentGame.length > 0 && !game.turnInProgress) {      // only to accept a click if the length of the currentGame array is greater than 0. That way we know we have a game in progress. This is a defensive line for code to understand when we have a game in progress.
+                    let move = e.target.getAttribute("id");
+                    game.lastButton = move;     // now we have stored our last move/last button clicked in the lastButton
+                    lightsOn(move);
+                    game.playerMoves.push(move);
+                    playerTurn();
+                }
             });
             circle.setAttribute("data-listener", "true");
         }
@@ -31,7 +36,7 @@ function showScore() {
 
 function addTurn() {
     game.playerMoves = [];
-    game.currentGame.push(game.choices[(Math.floor(Math.random() *4))]);
+    game.currentGame.push(game.choices[(Math.floor(Math.random() * 4))]);
     showTurns();
 }
 
@@ -43,12 +48,14 @@ function lightsOn(circ) {
 }
 
 function showTurns() {
+    game.turnInProgress = true;
     game.turnNumber = 0;
     let turns = setInterval(() => {
         lightsOn(game.currentGame[game.turnNumber]);
         game.turnNumber++;
         if (game.turnNumber >= game.currentGame.length) {
             clearInterval(turns);
+            game.turnInProgress = false;
         }
     }, 800);
 }
@@ -67,6 +74,12 @@ function playerTurn() {
     }
 }
 
-module.exports = { game, newGame, showScore, addTurn, lightsOn, showTurns, playerTurn };
-
-
+module.exports = {
+    game,
+    newGame,
+    showScore,
+    addTurn,
+    lightsOn,
+    showTurns,
+    playerTurn
+};
